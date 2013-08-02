@@ -3,9 +3,15 @@ package s4gnuplot
 import Util._
 
 object Gnuplot {
+  val prefix = 
+    if (!System.getProperty("os.name").startsWith("Windows"))
+      "/tmp/"
+    else 
+      "c:/temp/"
   /** creates file in /tmp/, with provided lines in it */
   def create_file(lines: Seq[String]):String = {
-    val fileName = "/tmp/gnuplot_%d.sgnuplot" format (math.random * 100000000 toInt)
+    val fileName = 
+        (prefix + "gnuplot_%d.sgnuplot") format (math.random * 100000000 toInt)
     lines ##> new java.io.File(fileName)
     fileName
   }
@@ -19,7 +25,7 @@ object Gnuplot {
   /** cleans up the files in /tmp */
   def clean_up() {
     import sys.process._;
-    Seq("bash", "-c", "rm /tmp/gnuplot_*") !
+    Seq("bash", "-c", s"rm ${prefix}gnuplot_*") !
   }
 
   /** Execute gnuplot on provided plot object. */
@@ -41,6 +47,12 @@ object Gnuplot {
     execute_script(scriptFile)
     clean_up
 
+  }
+
+  def run(script: String) {
+    val dataFile = create_file(script.split("\n"))
+    execute_script(dataFile)
+    clean_up
   }
 
   /** Creates a default plot builder */

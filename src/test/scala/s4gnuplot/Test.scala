@@ -20,3 +20,22 @@ object Test {
     println("Done.")
   }
 }
+
+object Test2 {
+  import s4gnuplot.Gnuplot
+  Gnuplot.run("""
+    set terminal pngcairo  transparent enhanced font "arial,10" fontscale 1.0 size 500, 350 
+set output 'histograms.2.png'
+set key inside right top vertical Right noreverse noenhanced autotitles nobox
+set datafile missing '-'
+set style data linespoints
+set xlabel "# of Iterations"
+set ylabel "Time (ms)"
+set xtics border in scale 1,0.5 nomirror offset character 0, 0, 0 autojustify
+set xtics  norangelimit font ",8"
+set xtics   ()
+set title "Simple Selection" 
+i = 22
+plot 'immigration.dat' using 2:xtic(1) title columnheader(2), for [i=3:22] '' using i title columnheader(i)
+    """)
+}
